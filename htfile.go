@@ -35,11 +35,19 @@ func delete_user(realm string, user string) {
 
 
 func load_htfile(htfile string) {
-    fh := fopen_read(htfile)
+    fh, err := os.Open(htfile)
+    if err != nil {
+        switch PathError_to_Errno(err) {
+            case syscall.ENOENT:
+                return
+
+            default:
+                panic(err.String())
+        }
+    }
     defer fh.Close()
 
     var line string
-
     for {
         _, err := fmt.Fscanln(fh, &line)
 
@@ -57,39 +65,15 @@ func load_htfile(htfile string) {
 }
 
 func save_htfile(htfile string) {
-    fh := fopen_write(htfile)
+    fh, err := os.Create(htfile)
+    if err != nil {
+        panic(err.String())
+    }
     defer fh.Close()
 
     for key, value := range htdata {
         fmt.Fprintf(fh, "%s:%s\n", key, value)
     }
-}
-
-
-func fopen_read(htfile string) (*os.File) {
-    fh, err := os.Open(htfile, syscall.O_RDONLY, 0)
-
-    if err != nil {
-        switch PathError_to_Errno(err) {
-            case syscall.ENOENT:
-                return nil
-
-            default:
-                panic( err.String() )
-        }
-    }
-
-    return fh
-}
-
-func fopen_write(htfile string) *os.File {
-    fh, err := os.Open(htfile, syscall.O_WRONLY | syscall.O_TRUNC | syscall.O_CREAT, 0644)
-
-    if err != nil {
-        panic( err.String() )
-    }
-
-    return fh
 }
 
 func PathError_to_Errno(err os.Error) os.Errno {
