@@ -5,6 +5,7 @@ import (
     "io"
     "os"
     "syscall"
+    "encoding/line"
     "strings"
     "crypto/md5"
 )
@@ -47,20 +48,19 @@ func load_htfile(htfile string) {
     }
     defer fh.Close()
 
-    var line string
+    reader := line.NewReader(fh, 160)
+
     for {
-        _, err := fmt.Fscanln(fh, &line)
+        line, _, err := reader.ReadLine()
 
         if len(line) == 0 {
             break
         } else if err != nil {
-            panic( err.String() )
+            panic(err.String())
         }
 
-        elm := strings.Split(line, ":", 3)
+        elm := strings.Split(string(line), ":", 3)
         htdata[ fmt.Sprintf("%s:%s", elm[0], elm[1]) ] = elm[2]
-
-        line = "";
     }
 }
 
