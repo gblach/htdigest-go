@@ -5,7 +5,7 @@ import (
     "io"
     "os"
     "syscall"
-    "encoding/line"
+    "bufio"
     "strings"
     "crypto/md5"
 )
@@ -48,7 +48,7 @@ func load_htfile(htfile string) {
     }
     defer fh.Close()
 
-    reader := line.NewReader(fh, 160)
+    reader := bufio.NewReader(fh)
 
     for {
         line, _, err := reader.ReadLine()
