@@ -59,7 +59,7 @@ func load_htfile(htfile string) {
             panic(err.String())
         }
 
-        elm := strings.Split(string(line), ":", 3)
+        elm := strings.Split(string(line), ":")
         htdata[ fmt.Sprintf("%s:%s", elm[0], elm[1]) ] = elm[2]
     }
 }
