@@ -35,12 +35,6 @@ Command line tool for managing htdigest files.
 
 ## Installation
 
-First of all, You need [go](http://golang.org/) compiler
-and [tcattr-go](http://github.com/Roorback/tcattr-go) library.  
-Currently tcattr-go works only on Linux and FreeBSD systems, sorry.
-
-### Building steps
-
     git clone git://github.com/Roorback/htdigest-go.git
     cd htdigest-go
     gomake
