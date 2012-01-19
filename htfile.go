@@ -1,50 +1,57 @@
 package main
 
 import (
+    "bufio"
+    "crypto/md5"
+    "exp/terminal"
     "fmt"
     "io"
     "os"
-    "syscall"
-    "bufio"
     "strings"
-    "crypto/md5"
 )
-
 
 var htdata = map[string] string{}
 
-
-func add_change_user(realm string, user string) {
-    var passwd, pwd_again string
+func read_passwd() string {
     print("Password: ")
-    fmt.Scan(&passwd)
-    print("Again: ")
-    fmt.Scan(&pwd_again)
+    pwd_first, err := terminal.ReadPassword(os.Stdin.Fd())
+    if err != nil {
+        panic(err)
+    }
+    println()
 
-    if(passwd != pwd_again) {
+    print("Again: ")
+    pwd_again, err := terminal.ReadPassword(os.Stdin.Fd())
+    if err != nil {
+        panic(err)
+    }
+    println()
+
+    passwd := string(pwd_first)
+
+    if(passwd != string(pwd_again)) {
         panic("Passwords don't match")
     }
 
+    return passwd
+}
+
+func add_or_change_user(realm string, user string) {
+    passwd := read_passwd()
+
     hash := md5.New()
     io.WriteString(hash, fmt.Sprintf("%s:%s:%s", user, realm, passwd))
-    htdata[ fmt.Sprintf("%s:%s", user, realm) ] = fmt.Sprintf("%x", hash.Sum())
+    htdata[ fmt.Sprintf("%s:%s", user, realm) ] = fmt.Sprintf("%x", hash.Sum(nil))
 }
 
 func delete_user(realm string, user string) {
-    htdata[ fmt.Sprintf("%s:%s", user, realm) ] = "", false;
+    delete(htdata, fmt.Sprintf("%s:%s", user, realm))
 }
-
 
 func load_htfile(htfile string) {
     fh, err := os.Open(htfile)
     if err != nil {
-        switch PathError_to_Errno(err) {
-            case syscall.ENOENT:
-                return
-
-            default:
-                panic(err.String())
-        }
+        panic(err)
     }
     defer fh.Close()
 
@@ -53,10 +60,10 @@ func load_htfile(htfile string) {
     for {
         line, _, err := reader.ReadLine()
 
-        if len(line) == 0 {
+        if err == io.EOF {
             break
         } else if err != nil {
-            panic(err.String())
+            panic(err)
         }
 
         elm := strings.Split(string(line), ":")
@@ -67,15 +74,11 @@ func load_htfile(htfile string) {
 func save_htfile(htfile string) {
     fh, err := os.Create(htfile)
     if err != nil {
-        panic(err.String())
+        panic(err)
     }
     defer fh.Close()
 
     for key, value := range htdata {
         fmt.Fprintf(fh, "%s:%s\n", key, value)
     }
-}
-
-func PathError_to_Errno(err os.Error) os.Errno {
-    return err.(*os.PathError).Error.(os.Errno)
 }

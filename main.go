@@ -3,7 +3,6 @@ package main
 import (
     "fmt"
     "os"
-    "tcattr"
 )
 
 func catch() {
@@ -27,18 +26,13 @@ func main() {
 
     htfile := os.Args[1]
     action := os.Args[2]
-    realm  := os.Args[3]
-    user   := os.Args[4]
-
-    tc := tcattr.BindFd(os.Stdin.Fd())
-    tc.LocalUnset(tcattr.ECHO)
-    tc.LocalSet(tcattr.ECHONL)
-    tc.Apply(tcattr.TCSANOW)
+    realm := os.Args[3]
+    user := os.Args[4]
 
     switch action {
         case "add":
             load_htfile(htfile)
-            add_change_user(realm, user)
+            add_or_change_user(realm, user)
 
         case "del":
             load_htfile(htfile)
@@ -47,9 +41,6 @@ func main() {
         default:
             usage()
     }
-
-    tc.LocalSet(tcattr.ECHO)
-    tc.Apply(tcattr.TCSANOW)
 
     save_htfile(htfile)
 }
