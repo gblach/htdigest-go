@@ -2,6 +2,7 @@
 
 Command line tool for managing htdigest files.
 
+
 ## Usage
 
     htdigest <htfile> <add|del> <realm> <user>
@@ -33,7 +34,14 @@ Command line tool for managing htdigest files.
     # delete user 'Shadow' from 'Team' realm
     htdigest my_digest_file del Team Shadow    
 
+
 ## Installation
+
+### Using goinstall
+
+    goinstall github.com/Roorback/htdigest-go
+
+### Manually
 
     git clone git://github.com/Roorback/htdigest-go.git
     cd htdigest-go
