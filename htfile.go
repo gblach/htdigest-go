@@ -50,7 +50,9 @@ func delete_user(realm string, user string) {
 
 func load_htfile(htfile string) {
     fh, err := os.Open(htfile)
-    if err != nil {
+    if err.(*os.PathError).Err == os.ENOENT {
+        return
+    } else if err != nil {
         panic(err)
     }
     defer fh.Close()
