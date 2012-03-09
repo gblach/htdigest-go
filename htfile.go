@@ -8,20 +8,23 @@ import (
     "io"
     "os"
     "strings"
+    "syscall"
 )
 
 var htdata = map[string] string{}
 
 func read_passwd() string {
+    var fd int = int(os.Stdin.Fd())
+
     print("Password: ")
-    pwd_first, err := terminal.ReadPassword(os.Stdin.Fd())
+    pwd_first, err := terminal.ReadPassword(fd)
     if err != nil {
         panic(err)
     }
     println()
 
     print("Again: ")
-    pwd_again, err := terminal.ReadPassword(os.Stdin.Fd())
+    pwd_again, err := terminal.ReadPassword(fd)
     if err != nil {
         panic(err)
     }
@@ -50,7 +53,7 @@ func delete_user(realm string, user string) {
 
 func load_htfile(htfile string) {
     fh, err := os.Open(htfile)
-    if err.(*os.PathError).Err == os.ENOENT {
+    if err.(*os.PathError).Err == syscall.ENOENT {
         return
     } else if err != nil {
         panic(err)
