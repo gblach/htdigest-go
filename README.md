@@ -37,13 +37,4 @@ Command line tool for managing htdigest files.
 
 ## Installation
 
-### Using goinstall
-
-    goinstall github.com/Roorback/htdigest-go
-
-### Manually
-
-    git clone git://github.com/Roorback/htdigest-go.git
-    cd htdigest-go
-    gomake
-    gomake install
+    go get github.com/MagikBSD/htdigest-go
