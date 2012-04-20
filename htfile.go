@@ -3,7 +3,6 @@ package main
 import (
     "bufio"
     "crypto/md5"
-    "exp/terminal"
     "fmt"
     "io"
     "os"
@@ -13,34 +12,8 @@ import (
 
 var htdata = map[string] string{}
 
-func read_passwd() string {
-    var fd int = int(os.Stdin.Fd())
-
-    print("Password: ")
-    pwd_first, err := terminal.ReadPassword(fd)
-    if err != nil {
-        panic(err)
-    }
-    println()
-
-    print("Again: ")
-    pwd_again, err := terminal.ReadPassword(fd)
-    if err != nil {
-        panic(err)
-    }
-    println()
-
-    passwd := string(pwd_first)
-
-    if(passwd != string(pwd_again)) {
-        panic("Passwords don't match")
-    }
-
-    return passwd
-}
-
 func add_or_change_user(realm string, user string) {
-    passwd := read_passwd()
+    passwd := read_password()
 
     hash := md5.New()
     io.WriteString(hash, fmt.Sprintf("%s:%s:%s", user, realm, passwd))
@@ -53,7 +26,7 @@ func delete_user(realm string, user string) {
 
 func load_htfile(htfile string) {
     fh, err := os.Open(htfile)
-    if err.(*os.PathError).Err == syscall.ENOENT {
+    if err != nil && err.(*os.PathError).Err == syscall.ENOENT {
         return
     } else if err != nil {
         panic(err)
