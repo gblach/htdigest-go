@@ -10,6 +10,7 @@ import (
     "os"
 )
 
+
 func read_password() string {
     print("Password: ")
     passwd := stdin_read_password()

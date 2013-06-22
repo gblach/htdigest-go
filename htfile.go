@@ -10,18 +10,24 @@ import (
     "syscall"
 )
 
+
 var htdata = map[string] string{}
+
 
 func add_or_change_user(realm string, user string) {
     passwd := read_password()
 
     hash := md5.New()
     io.WriteString(hash, fmt.Sprintf("%s:%s:%s", user, realm, passwd))
-    htdata[ fmt.Sprintf("%s:%s", user, realm) ] = fmt.Sprintf("%x", hash.Sum(nil))
+
+    key := fmt.Sprintf("%s:%s", user, realm)
+    val := fmt.Sprintf("%x", hash.Sum(nil))
+    htdata[key] = val
 }
 
 func delete_user(realm string, user string) {
-    delete(htdata, fmt.Sprintf("%s:%s", user, realm))
+    key := fmt.Sprintf("%s:%s", user, realm)
+    delete(htdata, key)
 }
 
 func load_htfile(htfile string) {
@@ -34,7 +40,6 @@ func load_htfile(htfile string) {
     defer fh.Close()
 
     reader := bufio.NewReader(fh)
-
     for {
         line, _, err := reader.ReadLine()
 
@@ -45,7 +50,8 @@ func load_htfile(htfile string) {
         }
 
         elm := strings.Split(string(line), ":")
-        htdata[ fmt.Sprintf("%s:%s", elm[0], elm[1]) ] = elm[2]
+        key := fmt.Sprintf("%s:%s", elm[0], elm[1])
+        htdata[ key ] = elm[2]
     }
 }
 
@@ -56,7 +62,7 @@ func save_htfile(htfile string) {
     }
     defer fh.Close()
 
-    for key, value := range htdata {
-        fmt.Fprintf(fh, "%s:%s\n", key, value)
+    for key, val := range htdata {
+        fmt.Fprintf(fh, "%s:%s\n", key, val)
     }
 }

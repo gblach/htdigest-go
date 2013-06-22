@@ -5,6 +5,7 @@ import (
     "os"
 )
 
+
 func catch() {
     if err := recover(); err != nil {
         fmt.Fprintf(os.Stderr, "%s failed: %s\n", os.Args[0], err)
@@ -33,14 +34,14 @@ func main() {
         case "add":
             load_htfile(htfile)
             add_or_change_user(realm, user)
+            save_htfile(htfile)
 
         case "del":
             load_htfile(htfile)
             delete_user(realm, user)
+            save_htfile(htfile)
 
         default:
             usage()
     }
-
-    save_htfile(htfile)
 }
