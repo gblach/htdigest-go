@@ -7,7 +7,6 @@ func read_password() string {
 	print("Again: ")
 	pwd_again := stdin_read_password()
 
-	print(len(passwd))
 	if passwd != pwd_again {
 		panic("Passwords don't match")
 	}
