@@ -10,9 +10,7 @@ import (
     "syscall"
 )
 
-
-var htdata = map[string] string{}
-
+var htdata = map[string]string{}
 
 func add_or_change_user(realm string, user string) {
     passwd := read_password()
@@ -51,7 +49,7 @@ func load_htfile(htfile string) {
 
         elm := strings.Split(string(line), ":")
         key := fmt.Sprintf("%s:%s", elm[0], elm[1])
-        htdata[ key ] = elm[2]
+        htdata[key] = elm[2]
     }
 }
 

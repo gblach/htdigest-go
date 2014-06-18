@@ -10,7 +10,6 @@ import (
     "os"
 )
 
-
 func stdin_read_password() string {
     stdin := C.int(os.Stdin.Fd())
 
